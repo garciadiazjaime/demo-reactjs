@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 
 declare global {
   interface Window {
@@ -8,18 +8,17 @@ declare global {
   }
 }
 
-export default function () {
+export default function Page() {
   const [log, setLog] = useState<string[]>([]);
   const ref = useRef<HTMLIFrameElement | null>(null);
 
-  const print = (message: string) => {
-    console.log({ message, log });
-    const newLog = [...log, message];
+  const print = useCallback((message: string) => {
+    console.log(message);
+
     setLog((prev: string[]) => {
-      console.log({ prev });
       return [...prev, message];
     });
-  };
+  }, []);
 
   useEffect(() => {
     if (!ref.current?.contentWindow) {
@@ -43,7 +42,7 @@ export default function () {
     return () => {
       localStorage.removeItem("id");
     };
-  }, []);
+  }, [print]);
 
   return (
     <main>
@@ -62,14 +61,18 @@ export default function () {
       </section>
 
       <section
-        style={{ border: "1px dotted black", minHeight: 300, marginTop: 20 }}
+        style={{
+          border: "1px dotted black",
+          minHeight: 300,
+          marginTop: 20,
+          padding: 12,
+        }}
       >
         <div
           style={{
             fontWeight: "bold",
             opacity: 0.7,
             fontSize: 24,
-            padding: 12,
           }}
         >
           output [same as console]:

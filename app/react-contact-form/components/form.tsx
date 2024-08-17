@@ -108,7 +108,7 @@ export default function ContactForm() {
     }
 
     setEmailValid(EMAIL_REGEX.test(email));
-  }, [email]);
+  }, [email, emailTouch]);
 
   useEffect(() => {
     if (!messageTouch) {
@@ -116,7 +116,7 @@ export default function ContactForm() {
     }
 
     setMessageValid(!!message.length);
-  }, [message]);
+  }, [message, messageTouch]);
 
   return (
     <>
