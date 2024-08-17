@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Child App</title>
+  </head>
+  <body style="margin: 0; padding: 0; font-size: 32px; border: 2px dotted gray">
+    <main style="padding: 12px;">
+      <h1 style="opacity: 0.6">Child App <small>(iframe)</small></h1>
+      <button
+        style="font-size: 36px; padding: 24px; width: 100%;"
+        onclick="window.top.parentMethod()"
+      >
+        Click from iframe
+      </button>
+    </main>
+  </body>
+</html>
