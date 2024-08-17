@@ -26,14 +26,11 @@ export const emailService = async (
     return Promise.reject("DATA_INVALID");
   }
 
-  await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_PATH}/.netlify/functions/send-form`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        email: sanitize(email),
-        message: sanitize(message),
-      }),
-    }
-  );
+  await fetch(`/.netlify/functions/send-form`, {
+    method: "POST",
+    body: JSON.stringify({
+      email: sanitize(email),
+      message: sanitize(message),
+    }),
+  });
 };
