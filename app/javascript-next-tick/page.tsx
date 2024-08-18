@@ -85,7 +85,7 @@ export default function Page() {
       </section>
 
       <a
-        href="https://github.com/garciadiazjaime/"
+        href="https://github.com/garciadiazjaime/demo-reactjs/tree/main/app/javascript-next-tick"
         style={{
           textDecoration: "underline",
           fontSize: 24,
