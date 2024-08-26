@@ -73,7 +73,7 @@ export default function Page() {
       </div>
 
       <a
-        href="https://github.com/garciadiazjaime/demo-reactjs/tree/main/app/react-contact-form"
+        href="https://github.com/garciadiazjaime/demo-reactjs/blob/main/app/try-catch-vs-then-catch/page.tsx"
         style={{
           textDecoration: "underline",
           fontSize: 24,
