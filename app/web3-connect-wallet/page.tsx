@@ -26,7 +26,7 @@ function Button(props: { connectWalletHandler: () => void; address: string }) {
     return <div style={styles}>Wallet: {shortAddress}</div>;
   }
 
-  if (typeof window !== "undefined" && window.ethereum) {
+  if (window.ethereum) {
     return (
       <div style={styles} onClick={props.connectWalletHandler}>
         Connect wallet
