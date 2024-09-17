@@ -2,7 +2,7 @@
 
 import { MetaMaskInpageProvider } from "@metamask/providers";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 declare global {
   interface Window {
@@ -26,7 +26,7 @@ function Button(props: { connectWalletHandler: () => void; address: string }) {
     return <div style={styles}>Wallet: {shortAddress}</div>;
   }
 
-  if (window.ethereum) {
+  if (typeof window !== "undefined" && window.ethereum) {
     return (
       <div style={styles} onClick={props.connectWalletHandler}>
         Connect wallet
@@ -47,6 +47,7 @@ function Button(props: { connectWalletHandler: () => void; address: string }) {
 }
 
 export default function Page() {
+  const [clientSide, setClientSide] = useState(false);
   const [address, setAddress] = useState("");
 
   const connectWalletHandler = async () => {
@@ -61,6 +62,14 @@ export default function Page() {
 
     setAddress(accounts[0]);
   };
+
+  useEffect(() => {
+    setClientSide(true);
+  }, []);
+
+  if (!clientSide) {
+    return <></>;
+  }
 
   return (
     <div
