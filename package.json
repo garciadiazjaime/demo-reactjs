@@ -7,12 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest",
+    "model:copy": "cp ../django-models/data/public app/tensorflow-load-model/model"
   },
   "dependencies": {
     "@metamask/providers": "^17.2.0",
     "@netlify/functions": "^2.8.1",
     "@sendgrid/mail": "^8.1.3",
+    "@tensorflow/tfjs": "^4.21.0",
     "dotenv": "^16.4.5",
     "next": "14.2.5",
     "react": "^18",

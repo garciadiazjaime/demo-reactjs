@@ -6,6 +6,10 @@
 
 - [Utilizing `setTimeout` to Maintain Operation Sequence](https://www.garciadiazjaime.com/posts/javascript-next-tick)
 
+- [Try/Catch vs .then().catch(): Which Error Handling Approach is Better?](https://www.garciadiazjaime.com/posts/await-vs-then)
+
+- [Your First Steps in Web3: A Simple Demo](https://www.garciadiazjaime.com/posts/web3-connect-wallet)
+
 ## Collaboration
 
 - [Concerts and Events in Chicago](https://www.chicagomusiccompass.com/)
