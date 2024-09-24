@@ -11,6 +11,7 @@
     "model:copy": "cp ../django-models/data/public app/tensorflow-load-model/model"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.19.0",
     "@metamask/providers": "^17.2.0",
     "@netlify/functions": "^2.8.1",
     "@sendgrid/mail": "^8.1.3",

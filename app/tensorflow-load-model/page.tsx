@@ -22,25 +22,31 @@ const getTwitter = async (username: string) => {
   return data;
 };
 
-const getTweet = (popularity: number) => {
-  const jokes = () => {
-    if (!popularity || popularity < 10) {
-      return `—so low that even my mom would say, "Who?"`;
-    }
+const getJoke = (popularity: number, generatedJoke: string) => {
+  if (generatedJoke) {
+    return generatedJoke.replaceAll('"', "");
+  }
 
-    if (popularity < 40) {
-      return "—basically, somewhere between a backup dancer in a flash mob and a meme that hasn’t gone viral yet";
-    }
+  if (!popularity || popularity < 10) {
+    return `so low that even my mom would say, "Who?"`;
+  }
 
-    if (popularity < 80) {
-      return "—right in that sweet spot between a one-hit wonder and the opening act everyone actually showed up early for!";
-    }
+  if (popularity < 40) {
+    return "basically, somewhere between a backup dancer in a flash mob and a meme that hasn’t gone viral yet";
+  }
 
-    return "—I'd be be so famous even my selfies would have their own fan club!";
-  };
+  if (popularity < 80) {
+    return "right in that sweet spot between a one-hit wonder and the opening act everyone actually showed up early for!";
+  }
+
+  return "I'd be be so famous even my selfies would have their own fan club!";
+};
+
+const getTweet = (popularity: number, generatedJoke: string) => {
+  const joke = getJoke(popularity, generatedJoke);
 
   return encodeURIComponent(
-    `If I were an artist, my popularity would be ${popularity} out of 100 ${jokes()}. @chimusiccompass chicagomusiccompass.com`
+    `If I were an artist, my popularity would be ${popularity} out of 100 -${joke} @chimusiccompass chicagomusiccompass.com`
   );
 };
 
@@ -62,11 +68,13 @@ export default function Page() {
   const [model, setModel] = useState<tf.GraphModel>();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [joke, setJoke] = useState("");
 
   const reset = () => {
     setPopularity(0);
     setFollowers(0);
     setMessage("");
+    setJoke("");
   };
 
   const predictClickHandler = async () => {
@@ -105,6 +113,28 @@ export default function Page() {
 
     fetchModel();
   }, []);
+
+  useEffect(() => {
+    if (!popularity) {
+      return;
+    }
+
+    const fetchJoke = async () => {
+      const url = `/.netlify/functions/joke?popularity=${popularity}`;
+      const response = await fetch(url).catch(() => {});
+
+      if (!response) {
+        setJoke(getTweet(popularity, ""));
+        return;
+      }
+
+      const data = await response.text();
+
+      setJoke(getTweet(popularity, data));
+    };
+
+    fetchJoke();
+  }, [popularity]);
 
   const inputOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.value) {
@@ -210,9 +240,7 @@ export default function Page() {
 
         {popularity ? (
           <a
-            href={`https://twitter.com/intent/tweet?text=${getTweet(
-              popularity
-            )}`}
+            href={`https://twitter.com/intent/tweet?text=${joke}`}
             target="_blank"
             style={{
               display: "block",
