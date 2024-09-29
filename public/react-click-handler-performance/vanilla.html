@@ -1,0 +1,35 @@
+<html>
+  <head>
+    <script>
+      let increment = 0;
+
+      window.onload = function () {
+        document.querySelector("#counter").innerText = increment;
+
+        document.querySelector("a").addEventListener("click", function (event) {
+          event.preventDefault();
+          increment++;
+          document.querySelector("#counter").innerText = increment;
+        });
+      };
+    </script>
+  </head>
+  <body style="max-width: 800; margin: 0 auto; font-family: monospace;">
+    <a
+      href="#"
+      style="
+        display: inline-block;
+        padding: 20px 40px;
+        font-size: 28px;
+        border: 1px solid black;
+        width: 100%;
+        text-align: center;
+        text-decoration: none;
+        color: black;
+        margin-top: 40;
+        box-sizing: border-box;
+      "
+      >Increment <span id="counter"></span></a
+    >
+  </body>
+</html>
