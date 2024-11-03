@@ -5,16 +5,16 @@ import { useState, useEffect } from "react";
 import Loader from "@/app/react-contact-form/components/loader";
 import { EMAIL_REGEX } from "@/app/react-contact-form/components/support";
 
-import { signIn } from "./support";
+import { confirmSignUp } from "./support";
 
-export default function SignInForm() {
+export default function ConfirmAccountForm() {
   const [email, setEmail] = useState("");
   const [emailTouch, setEmailTouch] = useState(false);
   const [emailValid, setEmailValid] = useState(false);
 
-  const [password, setPassword] = useState("");
-  const [passwordTouch, setPasswordTouch] = useState(false);
-  const [passwordValid, setPasswordValid] = useState(false);
+  const [code, setCode] = useState("");
+  const [codeTouch, setCodeTouch] = useState(false);
+  const [codeValid, setCodeValid] = useState(false);
 
   const [feedback, setFeedback] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,14 +27,12 @@ export default function SignInForm() {
     setEmail(event.target.value);
   };
 
-  const passwordHandler = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    if (!passwordTouch) {
-      setPasswordTouch(true);
+  const codeHandler = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    if (!codeTouch) {
+      setCodeTouch(true);
     }
 
-    setPassword(event.target.value);
+    setCode(event.target.value);
   };
 
   const resetForm = () => {
@@ -42,9 +40,9 @@ export default function SignInForm() {
     setEmailTouch(false);
     setEmailValid(false);
 
-    setPassword("");
-    setPasswordTouch(false);
-    setPasswordValid(false);
+    setCode("");
+    setCodeTouch(false);
+    setCodeValid(false);
 
     setTimeout(() => {
       setFeedback("");
@@ -56,21 +54,21 @@ export default function SignInForm() {
       setEmailTouch(true);
     }
 
-    if (!passwordTouch) {
-      setPasswordTouch(true);
+    if (!codeTouch) {
+      setCodeTouch(true);
     }
 
-    if (!emailValid || !passwordValid) {
+    if (!emailValid || !codeValid) {
       return;
     }
 
     setLoading(true);
     setFeedback("");
 
-    signIn(email, password)
+    confirmSignUp(email, code)
       .then((response) => {
         console.log({ response });
-        setFeedback("Log in successfully");
+        setFeedback("Account confirmed successfully, you can Log in now.");
         resetForm();
       })
       .catch((error) => {
@@ -93,12 +91,12 @@ export default function SignInForm() {
     return "";
   };
 
-  const getPasswordColor = () => {
-    if (!passwordTouch) {
+  const getCodeColor = () => {
+    if (!codeTouch) {
       return;
     }
 
-    if (!passwordValid) {
+    if (!codeValid) {
       return "red";
     }
 
@@ -114,17 +112,17 @@ export default function SignInForm() {
   }, [email, emailTouch]);
 
   useEffect(() => {
-    if (!passwordTouch) {
+    if (!codeTouch) {
       return;
     }
 
-    setPasswordValid(!!password.length);
-  }, [password, passwordTouch]);
+    setCodeValid(!!code.length);
+  }, [code, codeTouch]);
 
   return (
     <>
       <fieldset style={{ margin: "12px 0", padding: 12 }}>
-        <legend>Sign in</legend>
+        <legend>Confirm</legend>
         <label
           style={{ marginTop: 20, display: "block", color: getEmailColor() }}
         >
@@ -141,19 +139,18 @@ export default function SignInForm() {
         />
 
         <label
-          style={{ marginTop: 20, display: "block", color: getPasswordColor() }}
+          style={{ marginTop: 20, display: "block", color: getCodeColor() }}
         >
-          Password *
+          Code *
         </label>
         <input
-          type="password"
           style={{
             width: "calc(100% - 16px)",
             fontSize: 24,
             padding: "12px 6px",
           }}
-          onChange={passwordHandler}
-          value={password}
+          onChange={codeHandler}
+          value={code}
         />
       </fieldset>
       <div style={{ margin: "12px 0" }}>

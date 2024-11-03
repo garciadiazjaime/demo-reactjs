@@ -3,7 +3,6 @@ import {
   InitiateAuthCommand,
   SignUpCommand,
   ConfirmSignUpCommand,
-  ResendConfirmationCodeCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 
 const AWS_REGION = "us-east-1";
@@ -27,7 +26,6 @@ export const signIn = async (username: string, password: string) => {
   try {
     response = await cognitoClient.send(command);
   } catch (error) {
-    console.error("Error signing in: ", error);
     throw error;
   }
 
@@ -63,25 +61,8 @@ export const signUp = async (email: string, password: string) => {
   const command = new SignUpCommand(params);
 
   try {
-    return await cognitoClient.send(command);
+    await cognitoClient.send(command);
   } catch (error) {
-    throw error;
-  }
-};
-
-export const resendCode = async (email: string) => {
-  const params = {
-    ClientId: AWS_CLIENT_ID,
-    Username: email,
-  };
-  const command = new ResendConfirmationCodeCommand(params);
-
-  try {
-    const response = await cognitoClient.send(command);
-    console.log("code sent", response);
-    return true;
-  } catch (error) {
-    console.error("Error resending code: ", error);
     throw error;
   }
 };
@@ -96,10 +77,7 @@ export const confirmSignUp = async (username: string, code: string) => {
 
   try {
     await cognitoClient.send(command);
-    console.log("User confirmed successfully");
-    return true;
   } catch (error) {
-    console.error("Error confirming sign up: ", error);
     throw error;
   }
 };

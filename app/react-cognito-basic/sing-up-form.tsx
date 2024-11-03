@@ -70,10 +70,15 @@ export default function SignUpForm() {
     signUp(email, password)
       .then((response) => {
         console.log({ response });
-        setFeedback("Login successfully");
+        setFeedback("Account created successfully");
         resetForm();
       })
       .catch((error) => {
+        if (error?.toString().includes("UsernameExistsException")) {
+          setFeedback("User already exists, try Sing In");
+          return;
+        }
+
         setFeedback(error.message);
       })
       .finally(() => {
