@@ -5,16 +5,17 @@ import { useState, useEffect } from "react";
 import Loader from "@/app/react-contact-form/components/loader";
 import { EMAIL_REGEX } from "@/app/react-contact-form/components/support";
 
-import { confirmSignUp } from "./support";
+import { signUp } from "./support"
+import { publish } from "./events";
 
-export default function ConfirmAccountForm() {
+export default function SignUpForm() {
   const [email, setEmail] = useState("");
   const [emailTouch, setEmailTouch] = useState(false);
   const [emailValid, setEmailValid] = useState(false);
 
-  const [code, setCode] = useState("");
-  const [codeTouch, setCodeTouch] = useState(false);
-  const [codeValid, setCodeValid] = useState(false);
+  const [password, setPassword] = useState("");
+  const [passwordTouch, setPasswordTouch] = useState(false);
+  const [passwordValid, setPasswordValid] = useState(false);
 
   const [feedback, setFeedback] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,12 +28,14 @@ export default function ConfirmAccountForm() {
     setEmail(event.target.value);
   };
 
-  const codeHandler = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (!codeTouch) {
-      setCodeTouch(true);
+  const passwordHandler = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    if (!passwordTouch) {
+      setPasswordTouch(true);
     }
 
-    setCode(event.target.value);
+    setPassword(event.target.value);
   };
 
   const resetForm = () => {
@@ -40,9 +43,9 @@ export default function ConfirmAccountForm() {
     setEmailTouch(false);
     setEmailValid(false);
 
-    setCode("");
-    setCodeTouch(false);
-    setCodeValid(false);
+    setPassword("");
+    setPasswordTouch(false);
+    setPasswordValid(false);
 
     setTimeout(() => {
       setFeedback("");
@@ -54,25 +57,25 @@ export default function ConfirmAccountForm() {
       setEmailTouch(true);
     }
 
-    if (!codeTouch) {
-      setCodeTouch(true);
+    if (!passwordTouch) {
+      setPasswordTouch(true);
     }
 
-    if (!emailValid || !codeValid) {
+    if (!emailValid || !passwordValid) {
       return;
     }
 
     setLoading(true);
     setFeedback("");
 
-    confirmSignUp(email, code)
-      .then((response) => {
-        console.log({ response });
-        setFeedback("Account confirmed successfully, you can Log in now.");
+    await signUp(email, password)
+      .then(() => {
+        setFeedback("password sent successfully");
         resetForm();
+        publish("page-change", "confirm-account");
       })
       .catch((error) => {
-        setFeedback(error.message);
+        setFeedback(error.toString());
       })
       .finally(() => {
         setLoading(false);
@@ -91,17 +94,22 @@ export default function ConfirmAccountForm() {
     return "";
   };
 
-  const getCodeColor = () => {
-    if (!codeTouch) {
+  const getPasswordColor = () => {
+    if (!passwordTouch) {
       return;
     }
 
-    if (!codeValid) {
+    if (!passwordValid) {
       return "red";
     }
 
     return "";
   };
+
+  const signInClickHandler = (event: { preventDefault: () => void }) => {
+    event.preventDefault()
+    publish("page-change", "sign-in");
+  }
 
   useEffect(() => {
     if (!emailTouch) {
@@ -112,21 +120,21 @@ export default function ConfirmAccountForm() {
   }, [email, emailTouch]);
 
   useEffect(() => {
-    if (!codeTouch) {
+    if (!passwordTouch) {
       return;
     }
 
-    setCodeValid(!!code.length);
-  }, [code, codeTouch]);
+    setPasswordValid(!!password.length);
+  }, [password, passwordTouch]);
 
   return (
     <>
       <fieldset style={{ margin: "12px 0", padding: 12 }}>
-        <legend>Confirm</legend>
+        <legend>Sign Up</legend>
         <label
           style={{ marginTop: 20, display: "block", color: getEmailColor() }}
         >
-          Email *
+          * Email:
         </label>
         <input
           style={{
@@ -139,18 +147,19 @@ export default function ConfirmAccountForm() {
         />
 
         <label
-          style={{ marginTop: 20, display: "block", color: getCodeColor() }}
+          style={{ marginTop: 20, display: "block", color: getPasswordColor() }}
         >
-          Code *
+          * Password:
         </label>
         <input
+          type="password"
           style={{
             width: "calc(100% - 16px)",
             fontSize: 24,
             padding: "12px 6px",
           }}
-          onChange={codeHandler}
-          value={code}
+          onChange={passwordHandler}
+          value={password}
         />
       </fieldset>
       <div style={{ margin: "12px 0" }}>
@@ -180,6 +189,11 @@ export default function ConfirmAccountForm() {
           {feedback}
         </div>
       </div>
+
+      <fieldset style={{ padding: 20, marginTop: 100 }}>
+        <legend>If you have an account</legend>
+        <a style={{ textAlign: "center", border: "1px solid black", padding: 20, cursor: "pointer", marginTop: 20, display: "block" }} href="" onClick={signInClickHandler}>Sign In</a>
+      </fieldset>
     </>
   );
 }

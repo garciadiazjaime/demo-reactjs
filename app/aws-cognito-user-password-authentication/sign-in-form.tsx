@@ -5,7 +5,8 @@ import { useState, useEffect } from "react";
 import Loader from "@/app/react-contact-form/components/loader";
 import { EMAIL_REGEX } from "@/app/react-contact-form/components/support";
 
-import { signIn } from "./support";
+import { signIn } from "./support"
+import { publish } from "./events"
 
 export default function SignInForm() {
   const [email, setEmail] = useState("");
@@ -67,19 +68,24 @@ export default function SignInForm() {
     setLoading(true);
     setFeedback("");
 
-    signIn(email, password)
-      .then((response) => {
-        console.log({ response });
-        setFeedback("Log in successfully");
+    await signIn(email, password)
+      .then(() => {
+        setFeedback("password sent successfully");
         resetForm();
+        publish("page-change", "dashboard");
       })
       .catch((error) => {
-        setFeedback(error.message);
+        setFeedback(error.toString());
       })
       .finally(() => {
         setLoading(false);
       });
   };
+
+  const signUpClickHandler = (event: { preventDefault: () => void }) => {
+    event.preventDefault()
+    publish("page-change", "sign-up");
+  }
 
   const getEmailColor = () => {
     if (!emailTouch) {
@@ -124,11 +130,11 @@ export default function SignInForm() {
   return (
     <>
       <fieldset style={{ margin: "12px 0", padding: 12 }}>
-        <legend>Sign in</legend>
+        <legend>Sign In</legend>
         <label
           style={{ marginTop: 20, display: "block", color: getEmailColor() }}
         >
-          Email *
+          * Email:
         </label>
         <input
           style={{
@@ -143,7 +149,7 @@ export default function SignInForm() {
         <label
           style={{ marginTop: 20, display: "block", color: getPasswordColor() }}
         >
-          Password *
+          * Password:
         </label>
         <input
           type="password"
@@ -183,6 +189,11 @@ export default function SignInForm() {
           {feedback}
         </div>
       </div>
+
+      <fieldset style={{ padding: 20, marginTop: 100 }}>
+        <legend>If you do not have an account</legend>
+        <a style={{ textAlign: "center", border: "1px solid black", padding: 20, cursor: "pointer", marginTop: 20, display: "block" }} href="" onClick={signUpClickHandler}>Sign Up</a>
+      </fieldset>
     </>
   );
 }
