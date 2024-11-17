@@ -24,7 +24,8 @@ export default function Page() {
     const getAuthorizationClickHandler = async (event: { preventDefault: () => void }) => {
         event.preventDefault()
 
-        const callback = encodeURIComponent(`${location.origin}${location.pathname}`)
+        const callback = `${location.origin}${location.pathname}`
+        console.log({ callback })
         window.location.replace(
             `https://api.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${callback}&scope=profile%20email%20openid`,
         );

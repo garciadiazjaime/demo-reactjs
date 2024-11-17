@@ -9,11 +9,11 @@ const handler = async (event: HandlerEvent) => {
   const { code, callback } = JSON.parse(event.body || "{}");
 
   const config = {
-    code,
-    client_id: LINKEDIN_CLIENT_ID,
-    client_secret: LINKEDIN_CLIENT_SECRET,
-    redirect_uri: callback,
     grant_type: "authorization_code",
+    code,
+    client_id: LINKEDIN_CLIENT_ID as string,
+    client_secret: LINKEDIN_CLIENT_SECRET as string,
+    redirect_uri: callback,
   };
 
   console.log({ config });
@@ -25,7 +25,7 @@ const handler = async (event: HandlerEvent) => {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: JSON.stringify(config),
+      body: new URLSearchParams(config),
     }
   );
 
