@@ -91,7 +91,7 @@ export default function Page() {
 
     return (
         <div style={{ maxWidth: 400, margin: "0 auto", padding: 12 }}>
-            <h1 style={{ marginBottom: 20 }}>LinkedIn Get User Info</h1>
+            <h1 style={{ marginBottom: 20, textAlign: "center" }}>LinkedIn Get User Info</h1>
             {!userInfo && (
                 <a
                     href=""
