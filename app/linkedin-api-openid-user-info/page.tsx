@@ -63,7 +63,8 @@ export default function Page() {
         }
 
         getUserInfo(code).then(() => {
-            window.location.reload();
+            const locationWithoutCode = location.origin + location.pathname;
+            window.location.replace(locationWithoutCode);
         });
     }, [code]);
 

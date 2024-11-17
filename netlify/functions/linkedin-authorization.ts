@@ -17,8 +17,6 @@ const handler = async (event: HandlerEvent) => {
     redirect_uri: LINKEDIN_REDIRECT as string,
   };
 
-  console.log({ config });
-
   const response = await fetch(
     `https://www.linkedin.com/oauth/v2/accessToken`,
     {
@@ -30,11 +28,7 @@ const handler = async (event: HandlerEvent) => {
     }
   );
 
-  console.log({ response });
-
   const data = await response.text();
-
-  console.log({ data });
 
   return {
     statusCode: 200,
