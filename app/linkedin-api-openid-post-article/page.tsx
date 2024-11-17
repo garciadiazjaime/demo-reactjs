@@ -42,7 +42,9 @@ export default function Page() {
             }),
         });
 
-        const data = await response.json()
+        console.log({ response })
+
+        const data = await response.text()
         console.log({ data })
     }
 
