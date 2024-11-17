@@ -81,7 +81,7 @@ export default function Page() {
     return (
         <div style={{ maxWidth: 400, margin: "0 auto", padding: 12 }}>
             <h1 style={{ marginBottom: 20, textAlign: "center" }}>
-                LinkedIn Get User Info
+                LinkedIn Access Token in 10 Steps
             </h1>
             {!userInfo && (
                 <a
