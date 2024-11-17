@@ -4,16 +4,17 @@ require("dotenv").config();
 
 const LINKEDIN_CLIENT_ID = process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID;
 const LINKEDIN_CLIENT_SECRET = process.env.LINKEDIN_CLIENT_SECRET;
+const LINKEDIN_REDIRECT = process.env.LINKEDIN_REDIRECT;
 
 const handler = async (event: HandlerEvent) => {
-  const { code, callback } = JSON.parse(event.body || "{}");
+  const { code } = JSON.parse(event.body || "{}");
 
   const config = {
     grant_type: "authorization_code",
     code,
     client_id: LINKEDIN_CLIENT_ID as string,
     client_secret: LINKEDIN_CLIENT_SECRET as string,
-    redirect_uri: callback,
+    redirect_uri: LINKEDIN_REDIRECT as string,
   };
 
   console.log({ config });

@@ -33,12 +33,10 @@ export default function Page() {
     const getAccessTokenClickHandler = async (event: { preventDefault: () => void }) => {
         event.preventDefault()
 
-        const callback = encodeURIComponent(`${location.origin}${location.pathname}`)
         const response = await fetch(`/.netlify/functions/linkedin-authorization`, {
             method: "POST",
             body: JSON.stringify({
                 code,
-                callback
             }),
         });
 
