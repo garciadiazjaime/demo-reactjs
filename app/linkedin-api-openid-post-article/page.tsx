@@ -1,19 +1,25 @@
 'use client'
 
+import { Suspense, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 
 const LINKEDIN_CLIENT_ID = process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID;
 
-
-export default function Page() {
+function Search({ setCode }: { setCode: (code: string) => void }) {
     const searchParams = useSearchParams()
     console.log({ searchParams, LINKEDIN_CLIENT_ID })
 
-    const code = searchParams.get('code')
+    const code = searchParams.get('code') as string
     console.log({ code })
+    setCode(code)
+
+    return <></>
+}
 
 
+export default function Page() {
+    const [code, setCode] = useState('')
 
     const getAuthorizationClickHandler = async (event: { preventDefault: () => void }) => {
         event.preventDefault()
@@ -45,5 +51,8 @@ export default function Page() {
         <a href="" onClick={getAuthorizationClickHandler} style={{ padding: 20, border: '1px solid black', display: "block", textAlign: "center" }}>Authorize</a>
         <br />
         <a href="" onClick={getAccessTokenClickHandler} style={{ padding: 20, border: '1px solid black', display: "block", textAlign: "center" }}>Get Token</a>
+        <Suspense>
+            <Search setCode={setCode} />
+        </Suspense>
     </div>
 }
