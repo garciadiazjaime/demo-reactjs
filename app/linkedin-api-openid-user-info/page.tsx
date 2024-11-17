@@ -28,10 +28,6 @@ function Search({
 }
 
 const getUserInfo = async (code: string) => {
-    if (!code) {
-        return;
-    }
-
     const response = await fetch(`/.netlify/functions/linkedin-authorization`, {
         method: "POST",
         body: JSON.stringify({
@@ -41,17 +37,6 @@ const getUserInfo = async (code: string) => {
 
     const data = await response.json();
     sessionStorage.setItem("linkedin_jwt_token", data.id_token);
-
-    const responseUser = await fetch(`/.netlify/functions/linkedin-userinfo`, {
-        method: "GET",
-        headers: {
-            Authorization: `Bearer ${data.access_token}`,
-        },
-    });
-
-    const user = await responseUser.json();
-
-    return user;
 };
 
 export default function Page() {
@@ -73,9 +58,12 @@ export default function Page() {
     };
 
     useEffect(() => {
-        getUserInfo(code).then((user) => {
-            setUserInfo(user);
-            setLoading(false);
+        if (!code) {
+            return;
+        }
+
+        getUserInfo(code).then(() => {
+            window.location.reload();
         });
     }, [code]);
 
@@ -91,7 +79,9 @@ export default function Page() {
 
     return (
         <div style={{ maxWidth: 400, margin: "0 auto", padding: 12 }}>
-            <h1 style={{ marginBottom: 20, textAlign: "center" }}>LinkedIn Get User Info</h1>
+            <h1 style={{ marginBottom: 20, textAlign: "center" }}>
+                LinkedIn Get User Info
+            </h1>
             {!userInfo && (
                 <a
                     href=""
@@ -112,7 +102,9 @@ export default function Page() {
             <div>
                 <pre>{userInfo && JSON.stringify(userInfo, null, 2)}</pre>
             </div>
-            {loading && <Loader />}
+            <div style={{ marginTop: 20, width: "100%", textAlign: "center" }}>
+                {loading && <Loader />}
+            </div>
         </div>
     );
 }
