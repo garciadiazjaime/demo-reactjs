@@ -20,6 +20,7 @@ function Search({ setCode }: { setCode: (code: string) => void }) {
 
 export default function Page() {
     const [code, setCode] = useState('')
+    const [accessToken, setAccessToken] = useState('')
 
     const getAuthorizationClickHandler = async (event: { preventDefault: () => void }) => {
         event.preventDefault()
@@ -42,6 +43,24 @@ export default function Page() {
 
         console.log({ response })
 
+        const data = await response.json()
+        console.log({ data })
+
+        setAccessToken(data.accessToken)
+    }
+
+    const getUserInfoClickHandler = async (event: { preventDefault: () => void }) => {
+        event.preventDefault()
+
+        const response = await fetch(`/.netlify/functions/linkedin-userinfo`, {
+            method: "POST",
+            body: JSON.stringify({
+                accessToken,
+            }),
+        });
+
+        console.log({ response })
+
         const data = await response.text()
         console.log({ data })
     }
@@ -51,6 +70,8 @@ export default function Page() {
         <a href="" onClick={getAuthorizationClickHandler} style={{ padding: 20, border: '1px solid black', display: "block", textAlign: "center" }}>Authorize</a>
         <br />
         <a href="" onClick={getAccessTokenClickHandler} style={{ padding: 20, border: '1px solid black', display: "block", textAlign: "center" }}>Get Token</a>
+        <br />
+        <a href="" onClick={getUserInfoClickHandler} style={{ padding: 20, border: '1px solid black', display: "block", textAlign: "center" }}>Get User Info</a>
         <Suspense>
             <Search setCode={setCode} />
         </Suspense>
