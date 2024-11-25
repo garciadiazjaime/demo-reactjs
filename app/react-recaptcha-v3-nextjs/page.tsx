@@ -1,8 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
+import Script from 'next/script'
 
-import ReCAPTCHA from "react-google-recaptcha";
+declare global {
+    interface Window {
+        grecaptcha: any;
+    }
+}
 
 import Loader from "@/app/react-contact-form/components/loader";
 
@@ -22,30 +27,25 @@ export default function Page() {
     const [feedback, setFeedback] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const reCaptchaRef = useRef<ReCAPTCHA>(null);
-
-    async function onReCaptchaChange(value: string | null) {
-        const response = await submit(value as string);
-
-        setLoading(false);
-        setFeedback(response);
-    }
-
     const loginClickHandler = (event: { preventDefault: () => void }) => {
+        event.preventDefault();
+
         setFeedback("");
         setLoading(true);
-        event.preventDefault();
-        reCaptchaRef?.current?.execute();
+
+        window.grecaptcha.enterprise.ready(async () => {
+            const token = await window.grecaptcha.enterprise.execute(process.env.NEXT_PUBLIC_RE_CAPTCHA_SITE_KEY, { action: 'LOGIN' });
+
+            const response = await submit(token as string);
+
+            setLoading(false);
+            setFeedback(response);
+        });
     };
 
     return (
         <main style={{ maxWidth: 600, margin: "0 auto", fontSize: 24 }}>
-            <ReCAPTCHA
-                ref={reCaptchaRef}
-                sitekey={process.env.NEXT_PUBLIC_RE_CAPTCHA_SITE_KEY as string}
-                size="invisible"
-                onChange={onReCaptchaChange}
-            />
+            <Script src={`https://www.google.com/recaptcha/enterprise.js?render=${process.env.NEXT_PUBLIC_RE_CAPTCHA_SITE_KEY}`} />
             <h1 style={{ padding: "20px 0" }}>Recaptcha</h1>
             <a
                 onClick={loginClickHandler}
