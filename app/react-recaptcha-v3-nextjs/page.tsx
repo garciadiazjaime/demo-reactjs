@@ -12,7 +12,7 @@ declare global {
 import Loader from "@/app/react-contact-form/components/loader";
 
 const submit = async (code: string) => {
-    const response = await fetch("/react-recaptcha-v3-nextjs/api", {
+    const response = await fetch("/.netlify/functions/react-recaptcha-v3-nextjs", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
