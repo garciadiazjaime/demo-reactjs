@@ -141,7 +141,7 @@ export default function Page() {
                 <div style={{ background: "#f2f2cd", padding: 20, margin: "40px 0 0" }}>
                     Account confirmed! You can now{" "}
                     <Link
-                        href="/react-aws-cognito-paswordless/login"
+                        href="/react-aws-cognito-passwordless-login/login"
                         style={{ textDecoration: "underline" }}
                     >
                         log in

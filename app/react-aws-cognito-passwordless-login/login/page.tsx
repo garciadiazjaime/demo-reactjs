@@ -67,9 +67,9 @@ export default function Page() {
             <h1>Passworless Login</h1>
 
             <div style={{ background: "#f2f2cd", padding: 20, margin: "20px 0" }}>
-                if you don&apos;t have an account, first
+                if you don&apos;t have an account, first {" "}
                 <Link
-                    href="/react-aws-cognito-paswordless/sign-up"
+                    href="/react-aws-cognito-passwordless-login/sign-up"
                     style={{ textDecoration: "underline" }}
                 >
                     create one
@@ -132,7 +132,7 @@ export default function Page() {
                 <div style={{ background: "#f2f2cd", padding: 20, margin: "40px 0 0" }}>
                     You signed in successfully! You can now go to your{" "}
                     <Link
-                        href="/react-aws-cognito-paswordless/profile"
+                        href="/react-aws-cognito-passwordless-login/profile"
                         style={{ textDecoration: "underline" }}
                     >
                         Profile

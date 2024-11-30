@@ -21,14 +21,14 @@ export default function Page() {
         await signOut();
 
         localStorage.removeItem("isSignedIn")
-        redirect("/react-aws-cognito-paswordless/login");
+        redirect("/react-aws-cognito-passwordless-login/login");
     };
 
 
 
     useEffect(() => {
         if (localStorage.getItem("isSignedIn") !== "true") {
-            redirect("/react-aws-cognito-paswordless/login");
+            redirect("/react-aws-cognito-passwordless-login/login");
         }
     }, []);
 
