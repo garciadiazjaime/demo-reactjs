@@ -58,6 +58,10 @@ export default function Page() {
 
     async function createAccountClickHandler(event: React.MouseEvent) {
         event.preventDefault();
+        if (!username) {
+            return;
+        }
+
         setLoading(true);
         const password = generatePassword();
 
@@ -77,6 +81,10 @@ export default function Page() {
     async function confirmAccountClickHandler(event: React.MouseEvent) {
         event.preventDefault();
 
+        if (!OTP) {
+            return;
+        }
+
         setLoading(true);
         const response = await confirmSignUp({ username, confirmationCode: OTP });
 
@@ -86,6 +94,18 @@ export default function Page() {
 
     return (
         <section style={{ fontSize: 24, maxWidth: 600, margin: "0 auto" }}>
+            <h1>Passworless Login</h1>
+
+            <div style={{ background: "#f2f2cd", padding: 20, margin: "20px 0" }}>
+                if you have an account already, please {" "}
+                <Link
+                    href="/react-aws-cognito-passwordless-login/login"
+                    style={{ textDecoration: "underline" }}
+                >
+                    log in
+                </Link>
+            </div>
+
             <h2>Step 1: Create Account</h2>
             <small>Enter your email:</small>
             <div>

@@ -36,6 +36,10 @@ export default function Page() {
     async function getOTPClickHandler(event: React.MouseEvent) {
         event.preventDefault();
 
+        if (!username) {
+            return;
+        }
+
         setLoading(true);
 
         await signOut();
@@ -53,6 +57,10 @@ export default function Page() {
 
     async function loginClickHandler(event: React.MouseEvent) {
         event.preventDefault();
+
+        if (!OTP) {
+            return;
+        }
 
         setLoading(true);
         const response = await confirmSignIn({ challengeResponse: OTP });
@@ -76,7 +84,7 @@ export default function Page() {
                 </Link>
             </div>
 
-            <div style={{ margin: "40px 0 0" }}>
+            <div>
                 <h2>Step 1: Request OTP</h2>
                 <small>Enter your email to request a one-time password (OTP):</small>
                 <input
