@@ -6,6 +6,7 @@ import { Amplify } from "aws-amplify";
 import { signIn, confirmSignIn, signOut } from "aws-amplify/auth";
 
 import Loader from "@/app/react-contact-form/components/loader";
+import { validateEmail } from "@/app/react-aws-cognito-passwordless-login/support"
 
 Amplify.configure({
     Auth: {
@@ -22,6 +23,8 @@ export default function Page() {
     const [isSignedIn, setIsSignedIn] = useState(false);
     const [requestOTP, setRequestOTP] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [usernameFeedback, setUsernameFeedback] = useState("");
+    const [loginFeedback, setLoginFeedback] = useState("");
 
     const usernameChangeHandler = (
         event: React.ChangeEvent<HTMLInputElement>
@@ -33,14 +36,29 @@ export default function Page() {
         setOTP(event.target.value);
     };
 
+    function usernameKeyDownHandler(event: React.KeyboardEvent) {
+        if (event.key === "Enter") {
+            getOTPClickHandler(event as unknown as React.MouseEvent);
+        }
+    }
+
+    function logInKeyDownHandler(event: React.KeyboardEvent) {
+        if (event.key === "Enter") {
+            loginClickHandler(event as unknown as React.MouseEvent);
+        }
+    }
+
     async function getOTPClickHandler(event: React.MouseEvent) {
         event.preventDefault();
 
-        if (!username) {
+        if (!validateEmail(username)) {
+            setUsernameFeedback("Please enter a valid email address.");
             return;
         }
 
         setLoading(true);
+        setUsernameFeedback("");
+        setUsernameFeedback("");
 
         await signOut();
 
@@ -49,9 +67,13 @@ export default function Page() {
             options: { authFlowType: "USER_AUTH" },
         });
 
-        await confirmSignIn({ challengeResponse: "EMAIL_OTP" });
+        try {
+            await confirmSignIn({ challengeResponse: "EMAIL_OTP" });
+            setRequestOTP(true);
+        } catch (error) {
+            setUsernameFeedback("Error requesting OTP. Please try again.");
+        }
 
-        setRequestOTP(true);
         setLoading(false);
     }
 
@@ -63,10 +85,17 @@ export default function Page() {
         }
 
         setLoading(true);
-        const response = await confirmSignIn({ challengeResponse: OTP });
+        setLoginFeedback("");
+        setUsernameFeedback("");
 
-        setIsSignedIn(response.isSignedIn);
-        localStorage.setItem("isSignedIn", "true")
+        try {
+            const response = await confirmSignIn({ challengeResponse: OTP });
+            setIsSignedIn(response.isSignedIn);
+            localStorage.setItem("isSignedIn", "true")
+        } catch (error) {
+            setLoginFeedback("Error logging in. Please try again.");
+        }
+
         setLoading(false);
     }
 
@@ -92,6 +121,8 @@ export default function Page() {
                     onChange={usernameChangeHandler}
                     value={username}
                     style={{ width: "100%", fontSize: 24, margin: "12px 0", padding: 12 }}
+                    tabIndex={1}
+                    onKeyDown={usernameKeyDownHandler}
                 />
                 <a
                     style={{
@@ -102,6 +133,8 @@ export default function Page() {
                         textAlign: "center",
                     }}
                     onClick={getOTPClickHandler}
+                    tabIndex={2}
+                    onKeyDown={usernameKeyDownHandler}
                 >
                     Get One-Time Password
                 </a>
@@ -110,6 +143,11 @@ export default function Page() {
             {requestOTP && (
                 <div style={{ background: "#f2f2cd", padding: 20, margin: "40px 0 0" }}>
                     OTP sent! Check your email.
+                </div>
+            )}
+            {usernameFeedback && (
+                <div style={{ background: "#f9dfde", padding: 20, margin: "40px 0 0" }}>
+                    {usernameFeedback}
                 </div>
             )}
 
@@ -121,6 +159,8 @@ export default function Page() {
                     onChange={OTPChangeHandler}
                     value={OTP}
                     style={{ width: "100%", fontSize: 24, margin: "12px 0", padding: 12 }}
+                    tabIndex={3}
+                    onKeyDown={logInKeyDownHandler}
                 />
                 <a
                     style={{
@@ -131,6 +171,8 @@ export default function Page() {
                         textAlign: "center",
                     }}
                     onClick={loginClickHandler}
+                    tabIndex={4}
+                    onKeyDown={logInKeyDownHandler}
                 >
                     Log in
                 </a>
@@ -147,6 +189,12 @@ export default function Page() {
                     </Link>
                 </div>
 
+            )}
+
+            {loginFeedback && (
+                <div style={{ background: "#f9dfde", padding: 20, margin: "40px 0 0" }}>
+                    {loginFeedback}
+                </div>
             )}
 
             <div style={{ display: "flex", justifyContent: "center", marginTop: 40 }}>

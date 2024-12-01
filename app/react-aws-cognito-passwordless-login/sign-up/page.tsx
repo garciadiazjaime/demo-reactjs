@@ -3,12 +3,10 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Amplify } from "aws-amplify";
-import {
-    signUp,
-    confirmSignUp,
-} from "aws-amplify/auth";
+import { signUp, confirmSignUp } from "aws-amplify/auth";
 
 import Loader from "@/app/react-contact-form/components/loader";
+import { generatePassword, validateEmail } from "@/app/react-aws-cognito-passwordless-login/support"
 
 Amplify.configure({
     Auth: {
@@ -19,32 +17,14 @@ Amplify.configure({
     },
 });
 
-function generatePassword() {
-    const lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
-    const uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const numberChars = "0123456789";
-    const symbolChars = "!@#$%^&*()_+-=[]{}|;':\",./<>?";
-
-    let allChars = lowercaseChars;
-    allChars += uppercaseChars;
-    allChars += numberChars;
-    allChars += symbolChars;
-
-    let password = "";
-    for (let i = 0; i < 16; i++) {
-        const randomIndex = Math.floor(Math.random() * allChars.length);
-        password += allChars.charAt(randomIndex);
-    }
-
-    return password;
-}
-
 export default function Page() {
     const [OTP, setOTP] = useState("");
     const [username, setUsername] = useState("");
     const [accountConfirmed, setAccountConfirmed] = useState(false);
     const [accountCreated, setAccountCreated] = useState(false);
+    const [accountCreationFeedback, setAccountCreationFeedback] = useState("");
     const [loading, setLoading] = useState(false);
+    const [accountConfirmedFeedback, setAccountConfirmedFeedback] = useState("");
 
     const usernameChangeHandler = (
         event: React.ChangeEvent<HTMLInputElement>
@@ -56,25 +36,52 @@ export default function Page() {
         setOTP(event.target.value);
     };
 
+    function handleKeyDown(event: React.KeyboardEvent) {
+        if (event.key === "Enter") {
+            createAccountClickHandler(event as unknown as React.MouseEvent);
+        }
+    }
+
+    function OTPKeyDownHandler(event: React.KeyboardEvent) {
+        if (event.key === "Enter") {
+            confirmAccountClickHandler(event as unknown as React.MouseEvent);
+        }
+    }
+
     async function createAccountClickHandler(event: React.MouseEvent) {
         event.preventDefault();
-        if (!username) {
+
+        setAccountCreationFeedback("");
+        setAccountConfirmedFeedback("");
+
+        if (!username || !validateEmail(username)) {
+            setAccountCreationFeedback("Please enter a valid email address.");
             return;
         }
 
         setLoading(true);
         const password = generatePassword();
 
-        await signUp({
-            username,
-            password,
-            options: {
-                userAttributes: {
-                    email: username,
+        try {
+            await signUp({
+                username,
+                password,
+                options: {
+                    userAttributes: {
+                        email: username,
+                    },
                 },
-            },
-        });
-        setAccountCreated(true);
+            });
+            setAccountCreated(true);
+            setAccountCreationFeedback("");
+        } catch (error) {
+            if (error instanceof Error) {
+                setAccountCreationFeedback(error.message);
+            } else {
+                setAccountCreationFeedback("An unknown error occurred.");
+            }
+        }
+
         setLoading(false);
     }
 
@@ -82,13 +89,23 @@ export default function Page() {
         event.preventDefault();
 
         if (!OTP) {
+            setAccountConfirmedFeedback("Please enter the confirmation code.");
             return;
         }
 
         setLoading(true);
-        const response = await confirmSignUp({ username, confirmationCode: OTP });
+        setAccountConfirmedFeedback("");
+        setAccountCreationFeedback("");
 
-        setAccountConfirmed(response.isSignUpComplete);
+        try {
+            const response = await confirmSignUp({ username, confirmationCode: OTP });
+
+            setAccountConfirmed(response.isSignUpComplete);
+        } catch (error) {
+            setAccountConfirmedFeedback("Error confirming account. Please try again.");
+        }
+
+
         setLoading(false);
     }
 
@@ -97,7 +114,7 @@ export default function Page() {
             <h1>Passworless Login</h1>
 
             <div style={{ background: "#f2f2cd", padding: 20, margin: "20px 0" }}>
-                if you have an account already, please {" "}
+                if you have an account already, please{" "}
                 <Link
                     href="/react-aws-cognito-passwordless-login/login"
                     style={{ textDecoration: "underline" }}
@@ -114,6 +131,8 @@ export default function Page() {
                     onChange={usernameChangeHandler}
                     value={username}
                     style={{ width: "100%", fontSize: 24, margin: "12px 0", padding: 12 }}
+                    tabIndex={1}
+                    onKeyDown={handleKeyDown}
                 />
                 <a
                     style={{
@@ -124,6 +143,8 @@ export default function Page() {
                         textAlign: "center",
                     }}
                     onClick={createAccountClickHandler}
+                    onKeyDown={handleKeyDown}
+                    tabIndex={2}
                 >
                     Create Account
                 </a>
@@ -131,6 +152,11 @@ export default function Page() {
             {accountCreated && (
                 <div style={{ background: "#f2f2cd", padding: 20, margin: "40px 0 0" }}>
                     Account created! Check your email for the confirmation code.
+                </div>
+            )}
+            {accountCreationFeedback && (
+                <div style={{ background: "#f9dfde", padding: 20, margin: "40px 0 0" }}>
+                    {accountCreationFeedback}
                 </div>
             )}
 
@@ -142,6 +168,8 @@ export default function Page() {
                     onChange={OTPChangeHandler}
                     value={OTP}
                     style={{ width: "100%", fontSize: 24, margin: "12px 0", padding: 12 }}
+                    tabIndex={3}
+                    onKeyDown={OTPKeyDownHandler}
                 />
                 <a
                     style={{
@@ -152,6 +180,8 @@ export default function Page() {
                         textAlign: "center",
                     }}
                     onClick={confirmAccountClickHandler}
+                    tabIndex={4}
+                    onKeyDown={OTPKeyDownHandler}
                 >
                     Confirmed Account
                 </a>
@@ -166,6 +196,12 @@ export default function Page() {
                     >
                         log in
                     </Link>
+                </div>
+            )}
+
+            {accountConfirmedFeedback && (
+                <div style={{ background: "#f9dfde", padding: 20, margin: "40px 0 0" }}>
+                    {accountConfirmedFeedback}
                 </div>
             )}
 
