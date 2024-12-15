@@ -94,7 +94,7 @@ export default function Page() {
     return <div style={{
         maxWidth: 600, margin: "0 auto", fontSize: 24
     }}>
-        <h1 style={{ marginBottom: 40 }}>React 19 Server Actions</h1>
+        <h1 style={{ marginBottom: 40 }}>React 19: New hook useActionState</h1>
 
         <BeforeForm />
 
