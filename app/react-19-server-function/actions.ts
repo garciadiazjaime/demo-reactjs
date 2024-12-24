@@ -1,4 +1,5 @@
-"use server";
+// todo: uncomment the line below when deploying to a server
+// "use server";
 
 const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
