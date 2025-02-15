@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import Greeting from "../greeting/page";
+import Greeting from "../greeting";
 
 export default function Counter() {
   const [count, setCount] = useState(0);
