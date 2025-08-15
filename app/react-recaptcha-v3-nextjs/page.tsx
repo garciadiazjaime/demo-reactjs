@@ -28,6 +28,9 @@ export default function Page() {
     const [loading, setLoading] = useState(false);
 
     const loginClickHandler = (event: { preventDefault: () => void }) => {
+        if (process.env.NEXT_PUBLIC_RE_CAPTCHA_STATUS !== "1") {
+            return null
+        }
         event.preventDefault();
 
         setFeedback("");
