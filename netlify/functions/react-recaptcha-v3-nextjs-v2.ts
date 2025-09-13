@@ -15,6 +15,10 @@ const validateRecaptcha = async (token: string) => {
 };
 
 const handler = async (event: HandlerEvent) => {
+  if (process.env.NEXT_PUBLIC_RE_CAPTCHA_STATUS !== "1") {
+    return null;
+  }
+
   const { code } = JSON.parse(event.body || "{}");
 
   const results = await validateRecaptcha(code);
