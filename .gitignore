@@ -41,3 +41,14 @@ next-env.d.ts
 
 # Visual Studio Code #
 .vscode/*
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+crash.log
+override.tf
+override.tf.json
+terraform.tfvars
+terraform.tfvars.json
